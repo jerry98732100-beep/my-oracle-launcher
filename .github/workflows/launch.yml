@@ -35,7 +35,7 @@ jobs:
             echo "Wait 300s..."
             sleep 300
           done
-        env:
+        env: # <--- 縮進已修正，與 run 對齊
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
@@ -48,4 +48,4 @@ jobs:
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: ${{ secrets.OCI_SHAPE }}
           OCI_MAX_INSTANCES: 1
-          OCI_SSH_PUBLIC_KEY: "" # 為了通過 PHP 型別檢查，保留空字串
+          OCI_SSH_PUBLIC_KEY: ""
