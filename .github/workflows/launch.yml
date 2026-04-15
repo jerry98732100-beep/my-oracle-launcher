@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '5 * * * *' # 每小時自動校準啟動
-
+    - cron: '35 * * * *' # 每小時 35 分再觸發一次（作為雙重保險）
 jobs:
   launch:
     runs-on: ubuntu-latest
