@@ -1,0 +1,51 @@
+name: Oracle ARM Auto Launcher (Public Turbo)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '5 * * * *' # 每小時自動校準啟動
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install Dependencies
+        run: composer update --prefer-dist --no-progress
+
+      - name: Setup Private Key
+        run: |
+          echo "${{ secrets.OCI_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Run Turbo Loop (5-min interval)
+        run: |
+          # 執行 11 次循環，每次間隔 300 秒，總長約 55 分鐘
+          for i in {1..11}
+          do
+            echo "Attempt #$i at $(date)"
+            php index.php
+            echo "Wait 300s..."
+            sleep 300
+          done
+        env:
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+          OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
+          OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
+          OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
+          OCI_PRIVATE_KEY_FILENAME: "private_key.pem"
+          OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
+          OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
+          OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
+          OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
+          OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
+          OCI_SHAPE: ${{ secrets.OCI_SHAPE }}
+          OCI_MAX_INSTANCES: 1
+          OCI_SSH_PUBLIC_KEY: "" # 為了通過 PHP 型別檢查，保留空字串
