@@ -18,7 +18,7 @@ jobs:
           php-version: '8.3'
 
       - name: Install Dependencies
-        run: composer update --prefer-dist --no-progress --no-progress
+        run: composer update --prefer-dist --no-progress --no-dev --no-audit
 
       - name: Setup Private Key
         run: |
